@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>There's No Place Like Phone · Deloitte 2016</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #f3ede0;
+  --bg2:     #ebe4d4;
+  --fg:      #1c1810;
+  --fg2:     #5a5245;
+  --fg3:     #b0a898;
+  --fg4:     #dbd4c4;
+  --acc:     #bf2000;
+  --acc2:    #e03810;
+  --gold:    #b08030;
+  --serif:   'Playfair Display', Georgia, serif;
+  --body:    'Source Serif 4', Georgia, serif;
+  --mono:    'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--body);
+  overflow-x: hidden;
+}
+
+/* ─── Grain overlay ─────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 1000; opacity: 0.4;
+}
+
+/* ─── HERO ─────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 max(80px, 6vw) 10vh;
+  position: relative; overflow: hidden;
+  background: var(--bg2);
+}
+
+.hero-gradient {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 65% 60% at 78% 52%, rgba(160,60,8,0.11) 0%, transparent 60%),
+    linear-gradient(170deg, var(--bg2) 0%, var(--bg) 100%);
+}
+
+.hero-num {
+  position: absolute; right: max(80px, 6vw); top: 10vh;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 3px;
+  color: var(--fg2); text-transform: uppercase; z-index: 1;
+}
+
+.hero-rule { width: 44px; height: 2px; background: var(--acc); margin-bottom: 20px; position: relative; z-index: 1; }
+
+.hero-kicker {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--acc); margin-bottom: 22px;
+  position: relative; z-index: 1;
+}
+
+.hero-hed {
+  font-family: var(--serif);
+  font-size: clamp(46px, 7.5vw, 108px);
+  font-weight: 700; line-height: 1.0;
+  color: var(--fg); position: relative; z-index: 1;
+  max-width: 880px;
+}
+.hero-hed em { font-style: italic; color: var(--acc); }
+
+.hero-dek {
+  font-family: var(--body); font-size: 20px;
+  font-style: italic; line-height: 1.7;
+  color: var(--fg2); max-width: 520px;
+  margin: 30px 0 36px; position: relative; z-index: 1;
+}
+
+.hero-byline {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--fg2); position: relative; z-index: 1;
+  border-top: 1px solid var(--fg3); padding-top: 16px;
+  display: inline-block;
+}
+
+.scroll-cue {
+  position: absolute; bottom: 36px; right: max(80px, 6vw);
+  font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--fg2); z-index: 1;
+  display: flex; align-items: center; gap: 10px;
+  animation: bob 2.2s ease-in-out infinite;
+}
+
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+/* ─── CHAPTER ────────────────────────────────────────── */
+.chapter {
+  max-width: 1360px; margin: 0 auto;
+  padding: 14vh max(80px, 6vw) 0;
+}
+
+.ch-eyebrow {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--acc); margin-bottom: 10px;
+}
+
+.ch-title {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.5vw, 52px);
+  font-weight: 400; line-height: 1.15;
+  color: var(--fg); border-top: 1px solid var(--fg3);
+  padding-top: 16px; margin-bottom: 8vh;
+}
+.ch-title em { font-style: italic; color: var(--acc); }
+.ch-title strong { font-weight: 700; }
+
+.ch-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 0 80px; align-items: start;
+}
+
+.ch-steps { padding: 4vh 0 50vh; grid-column: 1; }
+
+.ch-vis {
+  grid-column: 2; position: sticky; top: 10vh;
+  height: 80vh;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── STEPS ──────────────────────────────────────────── */
+.step {
+  min-height: 55vh; display: flex;
+  flex-direction: column; justify-content: center;
+  padding: 36px 0; opacity: 0.2;
+  transition: opacity 0.6s ease;
+  border-top: 1px solid transparent;
+  transition: opacity 0.6s ease, border-color 0.6s ease;
+}
+.step.active { opacity: 1; border-top-color: var(--acc); }
+.step:first-child { border-top: none; padding-top: 0; }
+
+.step-num {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--fg2); margin-bottom: 18px;
+}
+
+.step-stat {
+  font-family: var(--serif); font-weight: 700;
+  font-size: clamp(64px, 9vw, 96px);
+  color: var(--acc); line-height: 1; margin-bottom: 10px;
+  letter-spacing: -2px;
+}
+
+.step-hed {
+  font-family: var(--serif);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 400; line-height: 1.25;
+  color: var(--fg); margin-bottom: 18px;
+}
+
+.step-body {
+  font-family: var(--body); font-size: 17px;
+  line-height: 1.85; color: var(--fg2); max-width: 380px;
+}
+
+/* ─── DIVIDER ────────────────────────────────────────── */
+.div-wrap { max-width: 1360px; margin: 0 auto; padding: 0 max(80px, 6vw); }
+.div-wrap hr { border: none; border-top: 1px solid var(--fg3); margin: 12vh 0; }
+
+/* ─── FOOTER ─────────────────────────────────────────── */
+.story-footer {
+  max-width: 1360px; margin: 0 auto;
+  padding: 10vh max(80px, 6vw) 18vh;
+  border-top: 1px solid var(--fg3);
+}
+
+.footer-pullquote {
+  font-family: var(--serif); font-size: clamp(22px, 2.8vw, 38px);
+  font-style: italic; font-weight: 400; line-height: 1.45;
+  color: var(--fg2); max-width: 700px; margin-bottom: 40px;
+}
+.footer-pullquote span { color: var(--fg); }
+
+.footer-note {
+  font-family: var(--mono); font-size: 12px;
+  letter-spacing: 0.8px; color: var(--fg2); line-height: 1.9;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 960px) {
+  .hero { padding: 0 24px 10vh; }
+  .hero-num { right: 24px; }
+  .chapter { padding-left: 24px; padding-right: 24px; }
+  .div-wrap { padding-left: 24px; padding-right: 24px; }
+  .story-footer { padding-left: 24px; padding-right: 24px; }
+  .scroll-cue { right: 24px; }
+  .ch-layout { grid-template-columns: 1fr; }
+  .ch-vis {
+    grid-column: 1; order: -1;
+    position: relative; top: 0;
+    height: 55vw; min-height: 280px;
+    margin-bottom: 4vh;
+  }
+  .ch-steps { padding-bottom: 8vh; }
+  .step { min-height: 40vh; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero">
+  <div class="hero-gradient"></div>
+  <div class="hero-num">Deloitte Global Mobile Consumer Survey · UK · 2016</div>
+  <div class="hero-rule"></div>
+  <div class="hero-kicker">An interactive data story</div>
+  <h1 class="hero-hed">There's no<br>place like <em>phone.</em></h1>
+  <p class="hero-dek">Britain picked up 81 million smartphones and didn't put them down. A story about the device that became infrastructure.</p>
+  <div class="hero-byline">Fieldwork by Ipsos MORI · May–Jun 2016 · n = 4,003 UK adults aged 18–75</div>
+  <div class="scroll-cue">
+    <svg width="14" height="22" viewBox="0 0 14 22" fill="none">
+      <rect x="1" y="1" width="12" height="20" rx="6" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="7" cy="7" r="2" fill="currentColor" opacity="0.5">
+        <animate attributeName="cy" values="6;12;6" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0.2;0.5" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ══════════════════ CH 1: MORNING ══════════════════ -->
+<div class="chapter" id="ch-morning">
+  <div class="ch-eyebrow">Chapter 01</div>
+  <h2 class="ch-title">The <em>first</em> thing you touch</h2>
+  <div class="ch-layout">
+    <div class="ch-steps" id="steps-morning">
+
+      <div class="step active" data-vis="morning" data-state="0">
+        <div class="step-num">01 · The Wake-Up</div>
+        <div class="step-stat">32%</div>
+        <div class="step-hed">check their phone within five minutes of waking</div>
+        <p class="step-body">Before coffee. Before words. The first conscious act of the day, for nearly one in three British smartphone owners, is reaching for the glass rectangle on their bedside table.</p>
+      </div>
+
+      <div class="step" data-vis="morning" data-state="1">
+        <div class="step-num">01 · The First Act</div>
+        <div class="step-hed">News is what they're after — first</div>
+        <p class="step-body">27% head straight to news and current affairs. The smartphone has become the nation's unofficial morning paper, consumed in bed before the kettle has even boiled.</p>
+      </div>
+
+      <div class="step" data-vis="morning" data-state="2">
+        <div class="step-num">01 · The Social Loop</div>
+        <div class="step-hed">Then: the social reflex kicks in</div>
+        <p class="step-body">Social media (17%) and personal messaging (16%) follow close behind. Three of the top four morning activities are about connecting with other people — however passively.</p>
+      </div>
+
+      <div class="step" data-vis="morning" data-state="3">
+        <div class="step-num">01 · Work Creep</div>
+        <div class="step-hed">Work has no morning boundary</div>
+        <p class="step-body">9% check work email before they've left the house. The separation between life and work is dissolving — one early-morning notification at a time.</p>
+      </div>
+
+    </div>
+    <div class="ch-vis" id="vis-morning"></div>
+  </div>
+</div>
+
+<div class="div-wrap"><hr></div>
+
+<!-- ══════════════════ CH 2: DAY ══════════════════ -->
+<div class="chapter" id="ch-day">
+  <div class="ch-eyebrow">Chapter 02</div>
+  <h2 class="ch-title">The device that <em>never sleeps</em></h2>
+  <div class="ch-layout">
+    <div class="ch-steps" id="steps-day">
+
+      <div class="step active" data-vis="day" data-state="0">
+        <div class="step-num">02 · The Commute</div>
+        <div class="step-stat">78%</div>
+        <div class="step-hed">are using their phones on public transport by 8am</div>
+        <p class="step-body">The morning commute has been colonised. Three quarters of smartphone owners are scrolling through feeds while the city passes outside the window.</p>
+      </div>
+
+      <div class="step" data-vis="day" data-state="1">
+        <div class="step-num">02 · The Dinner Table</div>
+        <div class="step-stat">68%</div>
+        <div class="step-hed">use their phone during family dinner</div>
+        <p class="step-body">The family dinner table used to be a sanctuary from the outside world. No longer. The phone has quietly claimed a place setting of its own.</p>
+      </div>
+
+      <div class="step" data-vis="day" data-state="2">
+        <div class="step-num">02 · The Second Screen</div>
+        <div class="step-stat">81%</div>
+        <div class="step-hed">scroll while the television plays</div>
+        <p class="step-body">By 9pm, four in five smartphone owners are using their phone while watching TV. The television alone can no longer command full attention.</p>
+      </div>
+
+      <div class="step" data-vis="day" data-state="3">
+        <div class="step-num">02 · 3 in the Morning</div>
+        <div class="step-stat">34%</div>
+        <div class="step-hed">check the phone in the middle of the night</div>
+        <p class="step-body">For one in three, the day doesn't end at sleep. They wake at 3am and, almost reflexively, reach for the phone. Even rest is interrupted.</p>
+      </div>
+
+    </div>
+    <div class="ch-vis" id="vis-day"></div>
+  </div>
+</div>
+
+<div class="div-wrap"><hr></div>
+
+<!-- ══════════════════ CH 3: DEVICES ══════════════════ -->
+<div class="chapter" id="ch-devices">
+  <div class="ch-eyebrow">Chapter 03</div>
+  <h2 class="ch-title">The device that <em>overtook</em> everything</h2>
+  <div class="ch-layout">
+    <div class="ch-steps" id="steps-devices">
+
+      <div class="step active" data-vis="devices" data-state="0">
+        <div class="step-num">03 · The Ranking</div>
+        <div class="step-hed">Every portable device, ranked by ownership</div>
+        <p class="step-body">From laptops to VR headsets, British adults carry a dizzying array of portable technology in 2016. But one device has quietly moved to the very front of the queue.</p>
+      </div>
+
+      <div class="step" data-vis="devices" data-state="1">
+        <div class="step-num">03 · The Overtake</div>
+        <div class="step-stat">81%</div>
+        <div class="step-hed">Smartphone takes the crown — for the first time</div>
+        <p class="step-body">The smartphone has surpassed the laptop as Britain's most commonly owned portable device. A technology that did not exist in its current form until 2007 now sits atop the hierarchy.</p>
+      </div>
+
+      <div class="step" data-vis="devices" data-state="2">
+        <div class="step-num">03 · The Tail</div>
+        <div class="step-hed">Everything else lags far behind</div>
+        <p class="step-body">The gap to the rest is dramatic. Smart watches sit at 4%, VR headsets at 3%. These remain curiosities at the margins, while the phone has become essential infrastructure.</p>
+      </div>
+
+    </div>
+    <div class="ch-vis" id="vis-devices"></div>
+  </div>
+</div>
+
+<div class="div-wrap"><hr></div>
+
+<!-- ══════════════════ CH 4: GROWTH ══════════════════ -->
+<div class="chapter" id="ch-growth">
+  <div class="ch-eyebrow">Chapter 04</div>
+  <h2 class="ch-title">The <em>end</em> of the growth era</h2>
+  <div class="ch-layout">
+    <div class="ch-steps" id="steps-growth">
+
+      <div class="step active" data-vis="growth" data-state="0">
+        <div class="step-num">04 · The Sprint</div>
+        <div class="step-hed">Penetration grew at a furious pace</div>
+        <p class="step-body">In 2013, smartphone ownership grew by nineteen percentage points in a single year. The technology was sweeping through Britain — from early adopters to the mainstream, the hesitant, the converted.</p>
+      </div>
+
+      <div class="step" data-vis="growth" data-state="1">
+        <div class="step-num">04 · The Deceleration</div>
+        <div class="step-hed">The sprint became a jog</div>
+        <p class="step-body">By 2015, annual growth had fallen to 9 percentage points. The low-hanging fruit had been picked. Most people who were going to adopt had adopted.</p>
+      </div>
+
+      <div class="step" data-vis="growth" data-state="2">
+        <div class="step-num">04 · The Reckoning</div>
+        <div class="step-stat">+7pp</div>
+        <div class="step-hed">2016: Deloitte calls it "the end of the growth era"</div>
+        <p class="step-body">Just seven percentage points of new penetration in 2016. The smartphone has reached a saturation point. The race for ownership is effectively over.</p>
+      </div>
+
+    </div>
+    <div class="ch-vis" id="vis-growth"></div>
+  </div>
+</div>
+
+<div class="div-wrap"><hr></div>
+
+<!-- ══════════════════ CH 5: BIOMETRICS ══════════════════ -->
+<div class="chapter" id="ch-bio">
+  <div class="ch-eyebrow">Chapter 05</div>
+  <h2 class="ch-title">The body as <em>password</em></h2>
+  <div class="ch-layout">
+    <div class="ch-steps" id="steps-bio">
+
+      <div class="step active" data-vis="bio" data-state="0">
+        <div class="step-num">05 · The Fingerprint Age</div>
+        <div class="step-stat">21%</div>
+        <div class="step-hed">use their fingerprint to unlock their phone</div>
+        <p class="step-body">A fifth of all British smartphone owners have enrolled their fingerprint. Biometric authentication — once the preserve of spy films — has landed in the average pocket.</p>
+      </div>
+
+      <div class="step" data-vis="bio" data-state="1">
+        <div class="step-num">05 · The Dominance</div>
+        <div class="step-hed">Fingerprint dwarfs all alternatives</div>
+        <p class="step-body">Voice recognition and facial recognition sit at just 2% each. The fingerprint hasn't just won the biometric race — it lapped the competition before they found the starting line.</p>
+      </div>
+
+      <div class="step" data-vis="bio" data-state="2">
+        <div class="step-num">05 · The Adoption Rate</div>
+        <div class="step-stat">76%</div>
+        <div class="step-hed">of fingerprint reader owners have activated it</div>
+        <p class="step-body">64% say their phone has a fingerprint reader. Of those, three quarters have switched it on. The barrier is not willingness — it is hardware availability.</p>
+      </div>
+
+    </div>
+    <div class="ch-vis" id="vis-bio"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<div class="story-footer">
+  <p class="footer-pullquote">
+    "Perhaps the more honest question is not whether we are addicted to our phones, but whether that framing still matters —<span> when the phone has already become infrastructure.</span>"
+  </p>
+  <p class="footer-note">
+    Data: Deloitte Global Mobile Consumer Survey, UK Cut 2016. Fieldwork by Ipsos MORI, May–Jun 2016.<br>
+    n = 4,003 UK adults aged 18–75. All figures are weighted percentages.<br>
+    Independent visual interpretation — not affiliated with or endorsed by Deloitte LLP.
+  </p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+'use strict';
+
+// ─── Palette & Fonts ───────────────────────────────────
+const ACC    = '#bf2000';
+const ACC2   = '#e03810';
+const FG     = '#1c1810';
+const FG2    = '#5a5245';
+const FG3    = '#b0a898';
+const FG4    = '#dbd4c4';
+const MONO   = "'DM Mono', monospace";
+const SERIF  = "'Source Serif 4', Georgia, serif";
+const DISP   = "'Playfair Display', Georgia, serif";
+const DUR    = 650;
+const EASE   = d3.easeCubicInOut;
+
+// ─── Shared chart registry ─────────────────────────────
+const C = {};
+
+// ─── Glow filter factory ───────────────────────────────
+function addGlow(defs, id, stdDev = 4) {
+  const f = defs.append('filter').attr('id', id).attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%');
+  f.append('feGaussianBlur').attr('stdDeviation', stdDev).attr('result', 'blur');
+  const m = f.append('feMerge');
+  m.append('feMergeNode').attr('in', 'blur');
+  m.append('feMergeNode').attr('in', 'SourceGraphic');
+}
+
+// ═══════════════════════════════════════════════════════
+// VIS 1: MORNING ACTIVITIES
+// ═══════════════════════════════════════════════════════
+const morningData = [
+  { label: 'News / current affairs', pct: 27, key: 'news' },
+  { label: 'Social media',           pct: 17, key: 'social' },
+  { label: 'Personal messages',      pct: 16, key: 'msg' },
+  { label: 'Work calls',             pct: 12, key: 'wcalls' },
+  { label: 'Music / podcasts',       pct: 8,  key: 'music' },
+  { label: 'Weather',                pct: 7,  key: 'weather' },
+  { label: 'Instant messaging',      pct: 7,  key: 'im' },
+  { label: 'Work email',             pct: 4,  key: 'wemail' },
+];
+
+function initMorning() {
+  const el = document.getElementById('vis-morning');
+  const W = el.clientWidth, H = el.clientHeight;
+  const m = { t: 16, r: 56, b: 16, l: 178 };
+  const iW = W - m.l - m.r, iH = H - m.t - m.b;
+
+  const svg = d3.select('#vis-morning').append('svg').attr('width', W).attr('height', H);
+  const defs = svg.append('defs'); addGlow(defs, 'glow-m');
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const x = d3.scaleLinear().domain([0, 32]).range([0, iW]);
+  const y = d3.scaleBand().domain(morningData.map(d => d.key)).range([0, iH]).padding(0.38);
+
+  // Subtle axis line
+  g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', iH + 10).attr('y2', iH + 10).attr('stroke', FG3).attr('stroke-width', 0.5);
+
+  const rows = g.selectAll('.m-row').data(morningData).join('g')
+    .attr('class', 'm-row').attr('transform', d => `translate(0,${y(d.key)})`);
+
+  rows.append('rect')
+    .attr('class', 'm-track').attr('width', iW).attr('height', y.bandwidth())
+    .attr('rx', 2).attr('fill', '#e8e2d4').attr('opacity', 1);
+
+  rows.append('rect')
+    .attr('class', 'm-bar').attr('height', y.bandwidth()).attr('rx', 2)
+    .attr('width', 0).attr('fill', FG3);
+
+  rows.append('text')
+    .attr('class', 'm-label').attr('x', -10).attr('y', y.bandwidth() / 2)
+    .attr('dy', '0.35em').attr('text-anchor', 'end')
+    .attr('font-family', SERIF).attr('font-size', 14).attr('fill', FG2)
+    .text(d => d.label);
+
+  rows.append('text')
+    .attr('class', 'm-val').attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
+    .attr('x', d => x(d.pct) + 9).attr('text-anchor', 'start')
+    .attr('font-family', MONO).attr('font-size', 13).attr('fill', FG2)
+    .attr('opacity', 0).text(d => d.pct + '%');
+
+  // Animate in
+  rows.select('.m-bar')
+    .transition().duration(DUR).delay((_, i) => i * 70)
+    .attr('width', d => x(d.pct));
+  rows.select('.m-val')
+    .transition().duration(DUR).delay((_, i) => i * 70 + 250).attr('opacity', 1);
+
+  C.morning = { svg, x, y };
+  updateMorning(0);
+}
+
+function updateMorning(state) {
+  if (!C.morning) return;
+  const { svg } = C.morning;
+
+  const highlight = {
+    0: [],
+    1: ['news'],
+    2: ['news', 'social', 'msg'],
+    3: ['wemail', 'wcalls'],
+  }[state] || [];
+
+  svg.selectAll('.m-bar')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => highlight.includes(d.key) ? ACC : FG3)
+    .attr('opacity', d => highlight.length === 0 ? 1 : (highlight.includes(d.key) ? 1 : 0.18))
+    .attr('filter', d => highlight.includes(d.key) ? 'url(#glow-m)' : null);
+
+  svg.selectAll('.m-label')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => highlight.length === 0 ? FG3 : (highlight.includes(d.key) ? FG : FG3))
+    .attr('opacity', d => highlight.length === 0 ? 1 : (highlight.includes(d.key) ? 1 : 0.3));
+
+  svg.selectAll('.m-val')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => highlight.includes(d.key) ? ACC2 : FG2)
+    .attr('opacity', d => highlight.length === 0 ? 0.8 : (highlight.includes(d.key) ? 1 : 0.2))
+    .attr('font-weight', d => highlight.includes(d.key) ? '500' : '400');
+}
+
+// ═══════════════════════════════════════════════════════
+// VIS 2: DAY IN LIFE TIMELINE
+// ═══════════════════════════════════════════════════════
+const dayData = [
+  { time: '07:00', pct: 32, label: 'check phone within 5 min of waking',    key: 'wake',     night: false },
+  { time: '08:00', pct: 78, label: 'on public transport',                   key: 'commute',  night: false },
+  { time: '12:00', pct: 32, label: 'use phone for work calls',              key: 'work',     night: false },
+  { time: '17:30', pct:  9, label: 'pay for transit with phone',            key: 'pay',      night: false },
+  { time: '18:30', pct: 80, label: 'use phone while with friends',          key: 'friends',  night: false },
+  { time: '19:30', pct: 68, label: 'during family dinner',                  key: 'dinner',   night: false },
+  { time: '21:00', pct: 81, label: 'while watching TV',                     key: 'tv',       night: false },
+  { time: '23:05', pct: 27, label: 'check phone 5 min before sleep',        key: 'presleep', night: false },
+  { time: '03:00', pct: 34, label: 'check phone in the night',              key: 'night',    night: true  },
+];
+
+const dayActivateMap = {
+  0: ['wake', 'commute'],
+  1: ['wake', 'commute', 'work', 'pay', 'friends', 'dinner'],
+  2: ['wake', 'commute', 'work', 'pay', 'friends', 'dinner', 'tv', 'presleep'],
+  3: ['wake', 'commute', 'work', 'pay', 'friends', 'dinner', 'tv', 'presleep', 'night'],
+};
+const dayHighlightMap = { 0: 'commute', 1: 'dinner', 2: 'tv', 3: 'night' };
+
+function initDay() {
+  const el = document.getElementById('vis-day');
+  const W = el.clientWidth, H = el.clientHeight;
+  const m = { t: 20, r: 20, b: 20, l: 20 };
+  const iW = W - m.l - m.r, iH = H - m.t - m.b;
+  const cx = iW / 2;
+
+  const svg = d3.select('#vis-day').append('svg').attr('width', W).attr('height', H);
+  const defs = svg.append('defs'); addGlow(defs, 'glow-d', 5);
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const y = d3.scalePoint().domain(dayData.map(d => d.key)).range([0, iH]).padding(0.3);
+
+  // Vertical track (background)
+  g.append('line').attr('class', 'tl-bg-line')
+    .attr('x1', cx).attr('x2', cx).attr('y1', 0).attr('y2', iH)
+    .attr('stroke', FG4).attr('stroke-width', 1.5);
+
+  // Active line (animated height)
+  g.append('line').attr('class', 'tl-active-line')
+    .attr('x1', cx).attr('x2', cx)
+    .attr('y1', 0).attr('y2', 0)
+    .attr('stroke', FG3).attr('stroke-width', 1.5);
+
+  const rows = g.selectAll('.tl-row').data(dayData).join('g')
+    .attr('class', 'tl-row')
+    .attr('transform', d => `translate(0,${y(d.key)})`);
+
+  // Dot
+  rows.append('circle').attr('class', 'tl-dot')
+    .attr('cx', cx).attr('cy', 0).attr('r', 5)
+    .attr('fill', FG4).attr('stroke', FG3).attr('stroke-width', 1.5);
+
+  // Time (left side)
+  rows.append('text').attr('class', 'tl-time')
+    .attr('x', cx - 18).attr('y', 0).attr('dy', '0.35em')
+    .attr('text-anchor', 'end').attr('font-family', MONO)
+    .attr('font-size', 11).attr('fill', FG4).text(d => d.time);
+
+  // Pct (right side, large)
+  rows.append('text').attr('class', 'tl-pct')
+    .attr('x', cx + 18).attr('y', -1).attr('dy', '0.35em')
+    .attr('font-family', DISP).attr('font-size', 15).attr('font-weight', '700')
+    .attr('fill', FG4).text(d => d.pct + '%');
+
+  // Label (right side, below pct)
+  rows.append('text').attr('class', 'tl-label')
+    .attr('x', cx + 18).attr('y', 15).attr('dy', '0.35em')
+    .attr('font-family', SERIF).attr('font-size', 11)
+    .attr('fill', FG4).text(d => d.label);
+
+  C.day = { svg, y, cx, iH };
+  updateDay(0);
+}
+
+function updateDay(state) {
+  if (!C.day) return;
+  const { svg, y, cx, iH } = C.day;
+  const active = dayActivateMap[state] || [];
+  const hl = dayHighlightMap[state];
+
+  // Grow the active line to cover active items
+  const lastActive = active[active.length - 1];
+  const targetY = lastActive ? y(lastActive) : 0;
+  svg.select('.tl-active-line')
+    .transition().duration(DUR * 1.2).ease(EASE)
+    .attr('y2', targetY)
+    .attr('stroke', hl === 'night' ? ACC : FG3);
+
+  svg.selectAll('.tl-dot')
+    .transition().duration(DUR).ease(EASE)
+    .attr('r', d => d.key === hl ? 8 : (active.includes(d.key) ? 5 : 4))
+    .attr('fill', d => d.key === hl ? ACC : (active.includes(d.key) ? FG3 : FG4))
+    .attr('stroke', d => d.key === hl ? ACC2 : (active.includes(d.key) ? FG2 : FG4))
+    .attr('stroke-width', d => d.key === hl ? 0 : 1.5)
+    .attr('filter', d => d.key === hl ? 'url(#glow-d)' : null);
+
+  svg.selectAll('.tl-pct')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => d.key === hl ? ACC : (active.includes(d.key) ? FG : FG4))
+    .attr('font-size', d => d.key === hl ? 17 : 15);
+
+  svg.selectAll('.tl-label')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => d.key === hl ? FG2 : (active.includes(d.key) ? FG3 : FG4));
+
+  svg.selectAll('.tl-time')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => active.includes(d.key) ? FG3 : FG4);
+}
+
+// ═══════════════════════════════════════════════════════
+// VIS 3: DEVICE OWNERSHIP
+// ═══════════════════════════════════════════════════════
+const deviceData = [
+  { name: 'Smartphone',  pct: 81, key: 'phone' },
+  { name: 'Laptop',      pct: 76, key: 'laptop' },
+  { name: 'Tablet',      pct: 63, key: 'tablet' },
+  { name: 'eReader',     pct: 29, key: 'er' },
+  { name: 'Fitness band',pct:  9, key: 'fit' },
+  { name: 'Smart watch', pct:  4, key: 'sw' },
+  { name: 'VR headset',  pct:  3, key: 'vr' },
+];
+
+function initDevices() {
+  const el = document.getElementById('vis-devices');
+  const W = el.clientWidth, H = el.clientHeight;
+  const m = { t: 16, r: 60, b: 24, l: 130 };
+  const iW = W - m.l - m.r, iH = H - m.t - m.b;
+
+  const svg = d3.select('#vis-devices').append('svg').attr('width', W).attr('height', H);
+  const defs = svg.append('defs'); addGlow(defs, 'glow-dv');
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const x = d3.scaleLinear().domain([0, 100]).range([0, iW]);
+  const y = d3.scaleBand().domain(deviceData.map(d => d.key)).range([0, iH]).padding(0.38);
+
+  const rows = g.selectAll('.dv-row').data(deviceData).join('g')
+    .attr('class', 'dv-row').attr('transform', d => `translate(0,${y(d.key)})`);
+
+  rows.append('rect').attr('class', 'dv-track')
+    .attr('width', iW).attr('height', y.bandwidth()).attr('rx', 2).attr('fill', '#e8e2d4');
+
+  rows.append('rect').attr('class', 'dv-bar')
+    .attr('height', y.bandwidth()).attr('rx', 2).attr('width', 0).attr('fill', FG3);
+
+  rows.append('text').attr('class', 'dv-label')
+    .attr('x', -10).attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
+    .attr('text-anchor', 'end').attr('font-family', SERIF).attr('font-size', 14)
+    .attr('fill', FG2).text(d => d.name);
+
+  rows.append('text').attr('class', 'dv-val')
+    .attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
+    .attr('text-anchor', 'start').attr('font-family', MONO)
+    .attr('font-size', 13).attr('fill', FG2).attr('opacity', 0)
+    .attr('x', d => x(d.pct) + 9).text(d => d.pct + '%');
+
+  rows.select('.dv-bar')
+    .transition().duration(DUR).delay((_, i) => i * 55)
+    .attr('width', d => x(d.pct));
+  rows.select('.dv-val')
+    .transition().duration(DUR).delay((_, i) => i * 55 + 280).attr('opacity', 1);
+
+  C.devices = { svg, x };
+  updateDevices(0);
+}
+
+function updateDevices(state) {
+  if (!C.devices) return;
+  const { svg } = C.devices;
+
+  svg.selectAll('.dv-bar')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => {
+      if (state === 0) return FG3;
+      if (state === 1) return d.key === 'phone' ? ACC : FG3;
+      return d.key === 'phone' ? ACC : FG3;
+    })
+    .attr('opacity', d => {
+      if (state === 2) return d.key === 'phone' ? 1 : (d.pct < 10 ? 0.18 : 0.35);
+      return 1;
+    })
+    .attr('filter', d => state > 0 && d.key === 'phone' ? 'url(#glow-dv)' : null);
+
+  svg.selectAll('.dv-label')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => state > 0 && d.key === 'phone' ? FG : FG2)
+    .attr('font-size', d => state > 0 && d.key === 'phone' ? 15 : 14)
+    .attr('opacity', d => {
+      if (state === 2) return d.key === 'phone' ? 1 : (d.pct < 10 ? 0.3 : 0.55);
+      return 1;
+    });
+
+  svg.selectAll('.dv-val')
+    .transition().duration(DUR).ease(EASE)
+    .attr('fill', d => state > 0 && d.key === 'phone' ? ACC2 : FG2)
+    .attr('font-weight', d => state > 0 && d.key === 'phone' ? '500' : '400')
+    .attr('opacity', d => {
+      if (state === 0) return 0.8;
+      if (state === 2) return d.key === 'phone' ? 1 : (d.pct < 10 ? 0.2 : 0.4);
+      return state > 0 && d.key === 'phone' ? 1 : 0.8;
+    });
+}
+
+// ═══════════════════════════════════════════════════════
+// VIS 4: GROWTH CHART
+// ═══════════════════════════════════════════════════════
+const growthData = [
+  { year: '2013', pp: 19 },
+  { year: '2014', pp: 13 },
+  { year: '2015', pp:  9 },
+  { year: '2016', pp:  7 },
+];
+
+function initGrowth() {
+  const el = document.getElementById('vis-growth');
+  const W = el.clientWidth, H = el.clientHeight;
+  const m = { t: 40, r: 40, b: 54, l: 54 };
+  const iW = W - m.l - m.r, iH = H - m.t - m.b;
+
+  const svg = d3.select('#vis-growth').append('svg').attr('width', W).attr('height', H);
+  const defs = svg.append('defs'); addGlow(defs, 'glow-gr', 6);
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const x = d3.scaleBand().domain(growthData.map(d => d.year)).range([0, iW]).padding(0.38);
+  const y = d3.scaleLinear().domain([0, 22]).range([iH, 0]);
+
+  // Horizontal grid lines
+  [5, 10, 15, 20].forEach(v => {
+    g.append('line')
+      .attr('x1', 0).attr('x2', iW)
+      .attr('y1', y(v)).attr('y2', y(v))
+      .attr('stroke', FG4).attr('stroke-width', 0.5).attr('stroke-dasharray', '3,5');
+    g.append('text')
+      .attr('x', -10).attr('y', y(v)).attr('dy', '0.35em')
+      .attr('text-anchor', 'end').attr('font-family', MONO)
+      .attr('font-size', 11).attr('fill', FG2).text(v + 'pp');
+  });
+
+  // Baseline
+  g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', iH).attr('y2', iH)
+    .attr('stroke', FG3).attr('stroke-width', 1);
+
+  const barGs = g.selectAll('.gr-g').data(growthData).join('g')
+    .attr('class', 'gr-g');
+
+  barGs.append('rect').attr('class', 'gr-bar')
+    .attr('x', d => x(d.year)).attr('width', x.bandwidth())
+    .attr('rx', 3).attr('y', iH).attr('height', 0).attr('fill', FG3);
+
+  barGs.append('text').attr('class', 'gr-val')
+    .attr('x', d => x(d.year) + x.bandwidth() / 2)
+    .attr('y', iH - 10).attr('text-anchor', 'middle')
+    .attr('font-family', MONO).attr('font-size', 13).attr('font-weight', '500')
+    .attr('fill', 'transparent').text(d => '+' + d.pp + 'pp');
+
+  // X axis labels
+  g.selectAll('.gr-xl').data(growthData).join('text').attr('class', 'gr-xl')
+    .attr('x', d => x(d.year) + x.bandwidth() / 2)
+    .attr('y', iH + 22).attr('text-anchor', 'middle')
+    .attr('font-family', MONO).attr('font-size', 11).attr('fill', FG2)
+    .text(d => d.year);
+
+  C.growth = { svg, y, iH };
+  updateGrowth(0);
+}
+
+function updateGrowth(state) {
+  if (!C.growth) return;
+  const { svg, y, iH } = C.growth;
+
+  // How many bars to show
+  const showCount = state === 0 ? 1 : state === 1 ? 3 : 4;
+  const hlLast = state === 2;
+
+  svg.selectAll('.gr-bar')
+    .data(growthData)
+    .transition().duration(DUR).ease(EASE)
+    .delay((_, i) => i < showCount ? Math.max(0, (i - (showCount === 4 ? 3 : 0)) * 100) : 0)
+    .attr('y', (d, i) => i < showCount ? y(d.pp) : iH)
+    .attr('height', (d, i) => i < showCount ? iH - y(d.pp) : 0)
+    .attr('fill', (d, i) => i === 3 && hlLast ? ACC : FG3)
+    .attr('filter', (d, i) => i === 3 && hlLast ? 'url(#glow-gr)' : null);
+
+  svg.selectAll('.gr-val')
+    .data(growthData)
+    .transition().duration(DUR).ease(EASE)
+    .delay((_, i) => i < showCount ? Math.max(0, (i - (showCount === 4 ? 3 : 0)) * 100) + 200 : 0)
+    .attr('y', (d, i) => i < showCount ? y(d.pp) - 10 : iH - 10)
+    .attr('fill', (d, i) => {
+      if (i >= showCount) return 'transparent';
+      return i === 3 && hlLast ? ACC : FG2;
+    })
+    .attr('font-size', (d, i) => i === 3 && hlLast ? 15 : 13)
+    .attr('font-weight', (d, i) => i === 3 && hlLast ? '700' : '400');
+
+  // Year labels highlight
+  svg.selectAll('.gr-xl')
+    .data(growthData)
+    .transition().duration(DUR)
+    .attr('fill', (d, i) => i === 3 && hlLast ? ACC : FG2)
+    .attr('font-weight', (d, i) => i === 3 && hlLast ? '500' : '400');
+}
+
+// ═══════════════════════════════════════════════════════
+// VIS 5: BIOMETRICS
+// ═══════════════════════════════════════════════════════
+const bioData = [
+  { label: 'Fingerprint',        pct: 21, key: 'fp' },
+  { label: 'Voice recognition',  pct:  2, key: 'voice' },
+  { label: 'Facial recognition', pct:  2, key: 'face' },
+];
+
+function initBio() {
+  const el = document.getElementById('vis-bio');
+  const W = el.clientWidth, H = el.clientHeight;
+  const m = { t: 16, r: 60, b: 200, l: 170 };
+  const iW = W - m.l - m.r, iH = H - m.t - m.b;
+
+  const svg = d3.select('#vis-bio').append('svg').attr('width', W).attr('height', H);
+  const defs = svg.append('defs'); addGlow(defs, 'glow-bio', 5);
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+
+  const x = d3.scaleLinear().domain([0, 25]).range([0, iW]);
+  const y = d3.scaleBand().domain(bioData.map(d => d.key)).range([0, iH]).padding(0.45);
+
+  const rows = g.selectAll('.bio-row').data(bioData).join('g')
+    .attr('class', 'bio-row').attr('transform', d => `translate(0,${y(d.key)})`);
+
+  rows.append('rect').attr('class', 'bio-track')
+    .attr('width', iW).attr('height', y.bandwidth()).attr('rx', 2).attr('fill', '#e8e2d4');
+
+  rows.append('rect').attr('class', 'bio-bar')
+    .attr('height', y.bandwidth()).attr('rx', 2).attr('width', 0).attr('fill', FG3);
+
+  rows.append('text').attr('class', 'bio-label')
+    .attr('x', -10).attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
+    .attr('text-anchor', 'end').attr('font-family', SERIF).attr('font-size', 15)
+    .attr('fill', FG2).text(d => d.label);
+
+  rows.append('text').attr('class', 'bio-val')
+    .attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
+    .attr('x', d => x(d.pct) + 10).attr('text-anchor', 'start')
+    .attr('font-family', MONO).attr('font-size', 14).attr('fill', FG2)
+    .attr('opacity', 0).text(d => d.pct + '%');
+
+  // Stat cards
+  const cardY = iH + 40;
+  const cardW = (iW - 16) / 2;
+  const cardData = [
+    { label: 'Own a reader',     num: '64%', sub: 'say their phone has a fingerprint reader' },
+    { label: 'Have activated it',num: '76%', sub: 'of reader owners have switched it on' },
+  ];
+
+  const cards = g.selectAll('.bio-card').data(cardData).join('g')
+    .attr('class', 'bio-card')
+    .attr('transform', (_, i) => `translate(${i * (cardW + 16)},${cardY})`)
+    .attr('opacity', 0);
+
+  cards.append('rect').attr('width', cardW).attr('height', 110)
+    .attr('rx', 8).attr('fill', '#e8e2d4').attr('stroke', FG4).attr('stroke-width', 1);
+
+  cards.append('text').attr('x', 18).attr('y', 26)
+    .attr('font-family', MONO).attr('font-size', 10).attr('letter-spacing', '2px')
+    .attr('fill', FG2).text(d => d.label.toUpperCase());
+
+  cards.append('text').attr('x', 18).attr('y', 68)
+    .attr('font-family', DISP).attr('font-size', 38).attr('font-weight', '700')
+    .attr('fill', ACC).text(d => d.num);
+
+  cards.append('text').attr('x', 18).attr('y', 90)
+    .attr('font-family', SERIF).attr('font-size', 12)
+    .attr('fill', FG2).text(d => d.sub);
+
+  C.bio = { svg, x };
+  updateBio(0);
+}
+
+function updateBio(state) {
+  if (!C.bio) return;
+  const { svg, x } = C.bio;
+
+  if (state === 0) {
+    svg.selectAll('.bio-bar')
+      .transition().duration(DUR).ease(EASE)
+      .attr('width', d => d.key === 'fp' ? x(d.pct) : 0)
+      .attr('fill', ACC).attr('filter', 'url(#glow-bio)');
+    svg.selectAll('.bio-val')
+      .transition().duration(DUR)
+      .attr('opacity', d => d.key === 'fp' ? 1 : 0)
+      .attr('fill', ACC2);
+    svg.selectAll('.bio-label')
+      .transition().duration(DUR)
+      .attr('fill', d => d.key === 'fp' ? FG : FG2)
+      .attr('opacity', d => d.key === 'fp' ? 1 : 0.3);
+    svg.selectAll('.bio-card').transition().duration(DUR).attr('opacity', 0);
+  } else if (state === 1) {
+    svg.selectAll('.bio-bar')
+      .transition().duration(DUR).ease(EASE)
+      .attr('width', d => x(d.pct))
+      .attr('fill', d => d.key === 'fp' ? ACC : FG3)
+      .attr('filter', d => d.key === 'fp' ? 'url(#glow-bio)' : null);
+    svg.selectAll('.bio-val')
+      .transition().duration(DUR).attr('opacity', 1)
+      .attr('fill', d => d.key === 'fp' ? ACC2 : FG2);
+    svg.selectAll('.bio-label')
+      .transition().duration(DUR)
+      .attr('fill', d => d.key === 'fp' ? FG : FG2)
+      .attr('opacity', 1);
+    svg.selectAll('.bio-card').transition().duration(DUR).attr('opacity', 0);
+  } else {
+    svg.selectAll('.bio-bar')
+      .transition().duration(DUR).ease(EASE)
+      .attr('width', d => x(d.pct))
+      .attr('fill', d => d.key === 'fp' ? ACC : FG3)
+      .attr('filter', d => d.key === 'fp' ? 'url(#glow-bio)' : null);
+    svg.selectAll('.bio-val')
+      .transition().duration(DUR).attr('opacity', 1)
+      .attr('fill', d => d.key === 'fp' ? ACC2 : FG2);
+    svg.selectAll('.bio-label')
+      .transition().duration(DUR)
+      .attr('fill', d => d.key === 'fp' ? FG : FG2).attr('opacity', 1);
+    svg.selectAll('.bio-card')
+      .transition().duration(DUR).delay((_, i) => i * 160).attr('opacity', 1);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// SCROLL OBSERVATION
+// ═══════════════════════════════════════════════════════
+const stepObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const step = entry.target;
+    const container = step.closest('.ch-steps');
+    if (!container) return;
+    container.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    step.classList.add('active');
+    const vis   = step.dataset.vis;
+    const state = parseInt(step.dataset.state, 10);
+    dispatch(vis, state);
+  });
+}, { threshold: 0, rootMargin: '-20% 0px -60% 0px' });
+
+document.querySelectorAll('.step').forEach(el => stepObserver.observe(el));
+
+function dispatch(vis, state) {
+  const map = { morning: updateMorning, day: updateDay, devices: updateDevices, growth: updateGrowth, bio: updateBio };
+  if (map[vis]) map[vis](state);
+}
+
+// ═══════════════════════════════════════════════════════
+// INITIALISE
+// ═══════════════════════════════════════════════════════
+function ready() {
+  const els = ['vis-morning','vis-day','vis-devices','vis-growth','vis-bio'];
+  const ok = els.every(id => {
+    const el = document.getElementById(id);
+    return el && el.clientWidth > 0 && el.clientHeight > 0;
+  });
+  if (!ok) { requestAnimationFrame(ready); return; }
+  initMorning();
+  initDay();
+  initDevices();
+  initGrowth();
+  initBio();
+}
+requestAnimationFrame(ready);
+</script>
+</body>
+</html>
