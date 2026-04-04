@@ -106,6 +106,31 @@ body::before {
 
 @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
 
+/* ─── AUTHOR CREDIT ──────────────────────────────────── */
+.author-credit {
+  position: absolute; top: 10vh; left: max(80px, 6vw);
+  display: flex; align-items: center; gap: 9px; z-index: 2;
+}
+.author-pulse {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--acc);
+  animation: heartbeat 2.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes heartbeat {
+  0%   { opacity: 1;   transform: scale(1); }
+  14%  { opacity: 1;   transform: scale(1.55); }
+  28%  { opacity: 0.7; transform: scale(0.9); }
+  42%  { opacity: 1;   transform: scale(1.3); }
+  60%  { opacity: 1;   transform: scale(1); }
+  100% { opacity: 1;   transform: scale(1); }
+}
+.author-name {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--fg2);
+  opacity: 0.65;
+}
+
 /* ─── CHAPTER ────────────────────────────────────────── */
 .chapter {
   max-width: 1360px; margin: 0 auto;
@@ -202,21 +227,48 @@ body::before {
 
 /* ─── RESPONSIVE ─────────────────────────────────────── */
 @media (max-width: 960px) {
-  .hero { padding: 0 24px 10vh; }
-  .hero-num { right: 24px; }
-  .chapter { padding-left: 24px; padding-right: 24px; }
-  .div-wrap { padding-left: 24px; padding-right: 24px; }
-  .story-footer { padding-left: 24px; padding-right: 24px; }
-  .scroll-cue { right: 24px; }
-  .ch-layout { grid-template-columns: 1fr; }
+  .hero { padding: 0 20px 10vh; background: var(--bg2); }
+  .hero-num {
+    right: 20px; top: auto; bottom: 10vh;
+    font-size: 10px; letter-spacing: 1.5px;
+    max-width: 55vw; text-align: right;
+    white-space: normal; line-height: 1.5;
+  }
+  .author-credit { left: 20px; top: 20px; }
+  .scroll-cue { right: 20px; bottom: 24px; }
+  .chapter { padding: 10vh 20px 0; }
+  .div-wrap { padding: 0 20px; }
+  .div-wrap hr { margin: 8vh 0; }
+  .story-footer { padding: 8vh 20px 14vh; }
+  .ch-layout { grid-template-columns: 1fr; gap: 0; }
+  .ch-title { margin-bottom: 4vh; font-size: clamp(26px, 6vw, 38px); }
   .ch-vis {
     grid-column: 1; order: -1;
-    position: relative; top: 0;
-    height: 55vw; min-height: 280px;
-    margin-bottom: 4vh;
+    position: sticky; top: 0;
+    height: 46vw; min-height: 240px;
+    margin-bottom: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--fg4);
+    z-index: 10;
   }
-  .ch-steps { padding-bottom: 8vh; }
-  .step { min-height: 40vh; }
+  /* bio chart vis needs extra room for stat cards */
+  #vis-bio { min-height: 420px; height: 420px; }
+  .ch-steps { padding: 3vh 0 30vh; }
+  .step { min-height: 50vh; padding: 28px 0; }
+  .step-stat { font-size: clamp(56px, 14vw, 80px); }
+  .step-hed { font-size: clamp(20px, 5vw, 26px); }
+  .step-body { font-size: 16px; max-width: 100%; }
+  .footer-pullquote { font-size: clamp(18px, 5vw, 28px); }
+  .footer-note { font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .hero-hed { font-size: clamp(40px, 12vw, 64px); }
+  .hero-dek { font-size: 17px; }
+  .ch-vis { height: 52vw; min-height: 210px; }
+  #vis-bio { min-height: 400px; height: 400px; }
+  .step { min-height: 60vh; }
+  .step-body { font-size: 15px; }
 }
 </style>
 </head>
@@ -225,6 +277,10 @@ body::before {
 <!-- ══════════════════ HERO ══════════════════ -->
 <section class="hero">
   <div class="hero-gradient"></div>
+  <div class="author-credit">
+    <div class="author-pulse"></div>
+    <span class="author-name">Dr. Rahul Venugopal</span>
+  </div>
   <div class="hero-num">Deloitte Global Mobile Consumer Survey · UK · 2016</div>
   <div class="hero-rule"></div>
   <div class="hero-kicker">An interactive data story</div>
@@ -448,13 +504,15 @@ const FG4    = '#dbd4c4';
 const MONO   = "'DM Mono', monospace";
 const SERIF  = "'Source Serif 4', Georgia, serif";
 const DISP   = "'Playfair Display', Georgia, serif";
-const DUR    = 650;
+const DUR    = 550;
 const EASE   = d3.easeCubicInOut;
 
 // ─── Shared chart registry ─────────────────────────────
 const C = {};
 
-// ─── Glow filter factory ───────────────────────────────
+// ─── Helpers ──────────────────────────────────────────
+const isMob = () => window.innerWidth < 960;
+
 function addGlow(defs, id, stdDev = 4) {
   const f = defs.append('filter').attr('id', id).attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%');
   f.append('feGaussianBlur').attr('stdDeviation', stdDev).attr('result', 'blur');
@@ -480,7 +538,10 @@ const morningData = [
 function initMorning() {
   const el = document.getElementById('vis-morning');
   const W = el.clientWidth, H = el.clientHeight;
-  const m = { t: 16, r: 56, b: 16, l: 178 };
+  const mob = W < 600;
+  const lbl = mob ? Math.min(110, W * 0.34) : 178;
+  const fs  = mob ? 11 : 13;
+  const m = { t: 10, r: mob ? 38 : 56, b: 10, l: lbl };
   const iW = W - m.l - m.r, iH = H - m.t - m.b;
 
   const svg = d3.select('#vis-morning').append('svg').attr('width', W).attr('height', H);
@@ -488,10 +549,7 @@ function initMorning() {
   const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
 
   const x = d3.scaleLinear().domain([0, 32]).range([0, iW]);
-  const y = d3.scaleBand().domain(morningData.map(d => d.key)).range([0, iH]).padding(0.38);
-
-  // Subtle axis line
-  g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', iH + 10).attr('y2', iH + 10).attr('stroke', FG3).attr('stroke-width', 0.5);
+  const y = d3.scaleBand().domain(morningData.map(d => d.key)).range([0, iH]).padding(0.35);
 
   const rows = g.selectAll('.m-row').data(morningData).join('g')
     .attr('class', 'm-row').attr('transform', d => `translate(0,${y(d.key)})`);
@@ -504,39 +562,34 @@ function initMorning() {
     .attr('class', 'm-bar').attr('height', y.bandwidth()).attr('rx', 2)
     .attr('width', 0).attr('fill', FG3);
 
+  // Truncate labels on mobile
   rows.append('text')
-    .attr('class', 'm-label').attr('x', -10).attr('y', y.bandwidth() / 2)
+    .attr('class', 'm-label').attr('x', -8).attr('y', y.bandwidth() / 2)
     .attr('dy', '0.35em').attr('text-anchor', 'end')
-    .attr('font-family', SERIF).attr('font-size', 14).attr('fill', FG2)
-    .text(d => d.label);
+    .attr('font-family', SERIF).attr('font-size', fs).attr('fill', FG2)
+    .text(d => mob && d.label.length > 14 ? d.label.slice(0, 13) + '…' : d.label);
 
   rows.append('text')
     .attr('class', 'm-val').attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
-    .attr('x', d => x(d.pct) + 9).attr('text-anchor', 'start')
-    .attr('font-family', MONO).attr('font-size', 13).attr('fill', FG2)
+    .attr('x', d => x(d.pct) + 7).attr('text-anchor', 'start')
+    .attr('font-family', MONO).attr('font-size', mob ? 10 : 13).attr('fill', FG2)
     .attr('opacity', 0).text(d => d.pct + '%');
 
-  // Animate in
   rows.select('.m-bar')
-    .transition().duration(DUR).delay((_, i) => i * 70)
+    .transition().duration(DUR).delay((_, i) => i * 60)
     .attr('width', d => x(d.pct));
   rows.select('.m-val')
-    .transition().duration(DUR).delay((_, i) => i * 70 + 250).attr('opacity', 1);
+    .transition().duration(DUR).delay((_, i) => i * 60 + 220).attr('opacity', 1);
 
   C.morning = { svg, x, y };
-  updateMorning(0);
+  updateMorning(C.morning._state || 0);
 }
 
 function updateMorning(state) {
   if (!C.morning) return;
+  C.morning._state = state;
   const { svg } = C.morning;
-
-  const highlight = {
-    0: [],
-    1: ['news'],
-    2: ['news', 'social', 'msg'],
-    3: ['wemail', 'wcalls'],
-  }[state] || [];
+  const highlight = { 0: [], 1: ['news'], 2: ['news', 'social', 'msg'], 3: ['wemail', 'wcalls'] }[state] || [];
 
   svg.selectAll('.m-bar')
     .transition().duration(DUR).ease(EASE)
@@ -546,7 +599,7 @@ function updateMorning(state) {
 
   svg.selectAll('.m-label')
     .transition().duration(DUR).ease(EASE)
-    .attr('fill', d => highlight.length === 0 ? FG3 : (highlight.includes(d.key) ? FG : FG3))
+    .attr('fill', d => highlight.length === 0 ? FG2 : (highlight.includes(d.key) ? FG : FG2))
     .attr('opacity', d => highlight.length === 0 ? 1 : (highlight.includes(d.key) ? 1 : 0.3));
 
   svg.selectAll('.m-val')
@@ -560,15 +613,15 @@ function updateMorning(state) {
 // VIS 2: DAY IN LIFE TIMELINE
 // ═══════════════════════════════════════════════════════
 const dayData = [
-  { time: '07:00', pct: 32, label: 'check phone within 5 min of waking',    key: 'wake',     night: false },
-  { time: '08:00', pct: 78, label: 'on public transport',                   key: 'commute',  night: false },
-  { time: '12:00', pct: 32, label: 'use phone for work calls',              key: 'work',     night: false },
-  { time: '17:30', pct:  9, label: 'pay for transit with phone',            key: 'pay',      night: false },
-  { time: '18:30', pct: 80, label: 'use phone while with friends',          key: 'friends',  night: false },
-  { time: '19:30', pct: 68, label: 'during family dinner',                  key: 'dinner',   night: false },
-  { time: '21:00', pct: 81, label: 'while watching TV',                     key: 'tv',       night: false },
-  { time: '23:05', pct: 27, label: 'check phone 5 min before sleep',        key: 'presleep', night: false },
-  { time: '03:00', pct: 34, label: 'check phone in the night',              key: 'night',    night: true  },
+  { time: '07:00', pct: 32, label: 'wake — check phone',         key: 'wake',     shortLabel: 'wake' },
+  { time: '08:00', pct: 78, label: 'public transport',           key: 'commute',  shortLabel: 'commute' },
+  { time: '12:00', pct: 32, label: 'work calls',                 key: 'work',     shortLabel: 'work calls' },
+  { time: '17:30', pct:  9, label: 'pay for transit',            key: 'pay',      shortLabel: 'transit pay' },
+  { time: '18:30', pct: 80, label: 'with friends',               key: 'friends',  shortLabel: 'friends' },
+  { time: '19:30', pct: 68, label: 'family dinner',              key: 'dinner',   shortLabel: 'dinner' },
+  { time: '21:00', pct: 81, label: 'watching TV',                key: 'tv',       shortLabel: 'watching TV' },
+  { time: '23:05', pct: 27, label: 'before sleep',               key: 'presleep', shortLabel: 'pre-sleep' },
+  { time: '03:00', pct: 34, label: 'middle of the night',        key: 'night',    shortLabel: '3am check' },
 ];
 
 const dayActivateMap = {
@@ -582,9 +635,14 @@ const dayHighlightMap = { 0: 'commute', 1: 'dinner', 2: 'tv', 3: 'night' };
 function initDay() {
   const el = document.getElementById('vis-day');
   const W = el.clientWidth, H = el.clientHeight;
-  const m = { t: 20, r: 20, b: 20, l: 20 };
+  const mob = W < 600;
+  const m = { t: 16, r: 16, b: 16, l: 16 };
   const iW = W - m.l - m.r, iH = H - m.t - m.b;
   const cx = iW / 2;
+  const fsPct = mob ? 13 : 15;
+  const fsLbl = mob ? 10 : 11;
+  const fsTime = mob ? 10 : 11;
+  const dotR = mob ? 4 : 5;
 
   const svg = d3.select('#vis-day').append('svg').attr('width', W).attr('height', H);
   const defs = svg.append('defs'); addGlow(defs, 'glow-d', 5);
@@ -592,55 +650,47 @@ function initDay() {
 
   const y = d3.scalePoint().domain(dayData.map(d => d.key)).range([0, iH]).padding(0.3);
 
-  // Vertical track (background)
   g.append('line').attr('class', 'tl-bg-line')
     .attr('x1', cx).attr('x2', cx).attr('y1', 0).attr('y2', iH)
     .attr('stroke', FG4).attr('stroke-width', 1.5);
 
-  // Active line (animated height)
   g.append('line').attr('class', 'tl-active-line')
-    .attr('x1', cx).attr('x2', cx)
-    .attr('y1', 0).attr('y2', 0)
+    .attr('x1', cx).attr('x2', cx).attr('y1', 0).attr('y2', 0)
     .attr('stroke', FG3).attr('stroke-width', 1.5);
 
   const rows = g.selectAll('.tl-row').data(dayData).join('g')
-    .attr('class', 'tl-row')
-    .attr('transform', d => `translate(0,${y(d.key)})`);
+    .attr('class', 'tl-row').attr('transform', d => `translate(0,${y(d.key)})`);
 
-  // Dot
   rows.append('circle').attr('class', 'tl-dot')
-    .attr('cx', cx).attr('cy', 0).attr('r', 5)
+    .attr('cx', cx).attr('cy', 0).attr('r', dotR)
     .attr('fill', FG4).attr('stroke', FG3).attr('stroke-width', 1.5);
 
-  // Time (left side)
   rows.append('text').attr('class', 'tl-time')
-    .attr('x', cx - 18).attr('y', 0).attr('dy', '0.35em')
+    .attr('x', cx - dotR - 8).attr('y', 0).attr('dy', '0.35em')
     .attr('text-anchor', 'end').attr('font-family', MONO)
-    .attr('font-size', 11).attr('fill', FG4).text(d => d.time);
+    .attr('font-size', fsTime).attr('fill', FG4).text(d => d.time);
 
-  // Pct (right side, large)
   rows.append('text').attr('class', 'tl-pct')
-    .attr('x', cx + 18).attr('y', -1).attr('dy', '0.35em')
-    .attr('font-family', DISP).attr('font-size', 15).attr('font-weight', '700')
+    .attr('x', cx + dotR + 8).attr('y', mob ? -1 : -2).attr('dy', '0.35em')
+    .attr('font-family', DISP).attr('font-size', fsPct).attr('font-weight', '700')
     .attr('fill', FG4).text(d => d.pct + '%');
 
-  // Label (right side, below pct)
   rows.append('text').attr('class', 'tl-label')
-    .attr('x', cx + 18).attr('y', 15).attr('dy', '0.35em')
-    .attr('font-family', SERIF).attr('font-size', 11)
-    .attr('fill', FG4).text(d => d.label);
+    .attr('x', cx + dotR + 8).attr('y', mob ? 12 : 14).attr('dy', '0.35em')
+    .attr('font-family', SERIF).attr('font-size', fsLbl)
+    .attr('fill', FG4).text(d => mob ? d.shortLabel : d.label);
 
   C.day = { svg, y, cx, iH };
-  updateDay(0);
+  updateDay(C.day._state || 0);
 }
 
 function updateDay(state) {
   if (!C.day) return;
+  C.day._state = state;
   const { svg, y, cx, iH } = C.day;
   const active = dayActivateMap[state] || [];
   const hl = dayHighlightMap[state];
 
-  // Grow the active line to cover active items
   const lastActive = active[active.length - 1];
   const targetY = lastActive ? y(lastActive) : 0;
   svg.select('.tl-active-line')
@@ -659,7 +709,10 @@ function updateDay(state) {
   svg.selectAll('.tl-pct')
     .transition().duration(DUR).ease(EASE)
     .attr('fill', d => d.key === hl ? ACC : (active.includes(d.key) ? FG : FG4))
-    .attr('font-size', d => d.key === hl ? 17 : 15);
+    .attr('font-size', function(d) {
+      const base = +d3.select(this).attr('font-size');
+      return d.key === hl ? base + 2 : base;
+    });
 
   svg.selectAll('.tl-label')
     .transition().duration(DUR).ease(EASE)
@@ -674,19 +727,22 @@ function updateDay(state) {
 // VIS 3: DEVICE OWNERSHIP
 // ═══════════════════════════════════════════════════════
 const deviceData = [
-  { name: 'Smartphone',  pct: 81, key: 'phone' },
-  { name: 'Laptop',      pct: 76, key: 'laptop' },
-  { name: 'Tablet',      pct: 63, key: 'tablet' },
-  { name: 'eReader',     pct: 29, key: 'er' },
-  { name: 'Fitness band',pct:  9, key: 'fit' },
-  { name: 'Smart watch', pct:  4, key: 'sw' },
-  { name: 'VR headset',  pct:  3, key: 'vr' },
+  { name: 'Smartphone',   pct: 81, key: 'phone' },
+  { name: 'Laptop',       pct: 76, key: 'laptop' },
+  { name: 'Tablet',       pct: 63, key: 'tablet' },
+  { name: 'eReader',      pct: 29, key: 'er' },
+  { name: 'Fitness band', pct:  9, key: 'fit' },
+  { name: 'Smart watch',  pct:  4, key: 'sw' },
+  { name: 'VR headset',   pct:  3, key: 'vr' },
 ];
 
 function initDevices() {
   const el = document.getElementById('vis-devices');
   const W = el.clientWidth, H = el.clientHeight;
-  const m = { t: 16, r: 60, b: 24, l: 130 };
+  const mob = W < 600;
+  const lbl = mob ? Math.min(90, W * 0.30) : 130;
+  const fs  = mob ? 11 : 14;
+  const m = { t: 12, r: mob ? 36 : 60, b: 20, l: lbl };
   const iW = W - m.l - m.r, iH = H - m.t - m.b;
 
   const svg = d3.select('#vis-devices').append('svg').attr('width', W).attr('height', H);
@@ -694,7 +750,7 @@ function initDevices() {
   const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
 
   const x = d3.scaleLinear().domain([0, 100]).range([0, iW]);
-  const y = d3.scaleBand().domain(deviceData.map(d => d.key)).range([0, iH]).padding(0.38);
+  const y = d3.scaleBand().domain(deviceData.map(d => d.key)).range([0, iH]).padding(0.35);
 
   const rows = g.selectAll('.dv-row').data(deviceData).join('g')
     .attr('class', 'dv-row').attr('transform', d => `translate(0,${y(d.key)})`);
@@ -706,51 +762,41 @@ function initDevices() {
     .attr('height', y.bandwidth()).attr('rx', 2).attr('width', 0).attr('fill', FG3);
 
   rows.append('text').attr('class', 'dv-label')
-    .attr('x', -10).attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
-    .attr('text-anchor', 'end').attr('font-family', SERIF).attr('font-size', 14)
+    .attr('x', -8).attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
+    .attr('text-anchor', 'end').attr('font-family', SERIF).attr('font-size', fs)
     .attr('fill', FG2).text(d => d.name);
 
   rows.append('text').attr('class', 'dv-val')
     .attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
     .attr('text-anchor', 'start').attr('font-family', MONO)
-    .attr('font-size', 13).attr('fill', FG2).attr('opacity', 0)
-    .attr('x', d => x(d.pct) + 9).text(d => d.pct + '%');
+    .attr('font-size', mob ? 10 : 13).attr('fill', FG2).attr('opacity', 0)
+    .attr('x', d => x(d.pct) + 7).text(d => d.pct + '%');
 
   rows.select('.dv-bar')
     .transition().duration(DUR).delay((_, i) => i * 55)
     .attr('width', d => x(d.pct));
   rows.select('.dv-val')
-    .transition().duration(DUR).delay((_, i) => i * 55 + 280).attr('opacity', 1);
+    .transition().duration(DUR).delay((_, i) => i * 55 + 260).attr('opacity', 1);
 
   C.devices = { svg, x };
-  updateDevices(0);
+  updateDevices(C.devices._state || 0);
 }
 
 function updateDevices(state) {
   if (!C.devices) return;
+  C.devices._state = state;
   const { svg } = C.devices;
 
   svg.selectAll('.dv-bar')
     .transition().duration(DUR).ease(EASE)
-    .attr('fill', d => {
-      if (state === 0) return FG3;
-      if (state === 1) return d.key === 'phone' ? ACC : FG3;
-      return d.key === 'phone' ? ACC : FG3;
-    })
-    .attr('opacity', d => {
-      if (state === 2) return d.key === 'phone' ? 1 : (d.pct < 10 ? 0.18 : 0.35);
-      return 1;
-    })
+    .attr('fill', d => state > 0 && d.key === 'phone' ? ACC : FG3)
+    .attr('opacity', d => state === 2 ? (d.key === 'phone' ? 1 : (d.pct < 10 ? 0.18 : 0.35)) : 1)
     .attr('filter', d => state > 0 && d.key === 'phone' ? 'url(#glow-dv)' : null);
 
   svg.selectAll('.dv-label')
     .transition().duration(DUR).ease(EASE)
     .attr('fill', d => state > 0 && d.key === 'phone' ? FG : FG2)
-    .attr('font-size', d => state > 0 && d.key === 'phone' ? 15 : 14)
-    .attr('opacity', d => {
-      if (state === 2) return d.key === 'phone' ? 1 : (d.pct < 10 ? 0.3 : 0.55);
-      return 1;
-    });
+    .attr('opacity', d => state === 2 ? (d.key === 'phone' ? 1 : (d.pct < 10 ? 0.3 : 0.55)) : 1);
 
   svg.selectAll('.dv-val')
     .transition().duration(DUR).ease(EASE)
@@ -776,7 +822,8 @@ const growthData = [
 function initGrowth() {
   const el = document.getElementById('vis-growth');
   const W = el.clientWidth, H = el.clientHeight;
-  const m = { t: 40, r: 40, b: 54, l: 54 };
+  const mob = W < 600;
+  const m = { t: 36, r: mob ? 16 : 40, b: mob ? 42 : 54, l: mob ? 32 : 54 };
   const iW = W - m.l - m.r, iH = H - m.t - m.b;
 
   const svg = d3.select('#vis-growth').append('svg').attr('width', W).attr('height', H);
@@ -786,24 +833,21 @@ function initGrowth() {
   const x = d3.scaleBand().domain(growthData.map(d => d.year)).range([0, iW]).padding(0.38);
   const y = d3.scaleLinear().domain([0, 22]).range([iH, 0]);
 
-  // Horizontal grid lines
   [5, 10, 15, 20].forEach(v => {
     g.append('line')
       .attr('x1', 0).attr('x2', iW)
       .attr('y1', y(v)).attr('y2', y(v))
       .attr('stroke', FG4).attr('stroke-width', 0.5).attr('stroke-dasharray', '3,5');
     g.append('text')
-      .attr('x', -10).attr('y', y(v)).attr('dy', '0.35em')
+      .attr('x', -8).attr('y', y(v)).attr('dy', '0.35em')
       .attr('text-anchor', 'end').attr('font-family', MONO)
-      .attr('font-size', 11).attr('fill', FG2).text(v + 'pp');
+      .attr('font-size', mob ? 9 : 11).attr('fill', FG2).text(v + 'pp');
   });
 
-  // Baseline
   g.append('line').attr('x1', 0).attr('x2', iW).attr('y1', iH).attr('y2', iH)
     .attr('stroke', FG3).attr('stroke-width', 1);
 
-  const barGs = g.selectAll('.gr-g').data(growthData).join('g')
-    .attr('class', 'gr-g');
+  const barGs = g.selectAll('.gr-g').data(growthData).join('g').attr('class', 'gr-g');
 
   barGs.append('rect').attr('class', 'gr-bar')
     .attr('x', d => x(d.year)).attr('width', x.bandwidth())
@@ -812,30 +856,27 @@ function initGrowth() {
   barGs.append('text').attr('class', 'gr-val')
     .attr('x', d => x(d.year) + x.bandwidth() / 2)
     .attr('y', iH - 10).attr('text-anchor', 'middle')
-    .attr('font-family', MONO).attr('font-size', 13).attr('font-weight', '500')
+    .attr('font-family', MONO).attr('font-size', mob ? 11 : 13).attr('font-weight', '500')
     .attr('fill', 'transparent').text(d => '+' + d.pp + 'pp');
 
-  // X axis labels
   g.selectAll('.gr-xl').data(growthData).join('text').attr('class', 'gr-xl')
     .attr('x', d => x(d.year) + x.bandwidth() / 2)
-    .attr('y', iH + 22).attr('text-anchor', 'middle')
-    .attr('font-family', MONO).attr('font-size', 11).attr('fill', FG2)
+    .attr('y', iH + (mob ? 18 : 22)).attr('text-anchor', 'middle')
+    .attr('font-family', MONO).attr('font-size', mob ? 10 : 11).attr('fill', FG2)
     .text(d => d.year);
 
   C.growth = { svg, y, iH };
-  updateGrowth(0);
+  updateGrowth(C.growth._state || 0);
 }
 
 function updateGrowth(state) {
   if (!C.growth) return;
+  C.growth._state = state;
   const { svg, y, iH } = C.growth;
-
-  // How many bars to show
   const showCount = state === 0 ? 1 : state === 1 ? 3 : 4;
   const hlLast = state === 2;
 
-  svg.selectAll('.gr-bar')
-    .data(growthData)
+  svg.selectAll('.gr-bar').data(growthData)
     .transition().duration(DUR).ease(EASE)
     .delay((_, i) => i < showCount ? Math.max(0, (i - (showCount === 4 ? 3 : 0)) * 100) : 0)
     .attr('y', (d, i) => i < showCount ? y(d.pp) : iH)
@@ -843,21 +884,15 @@ function updateGrowth(state) {
     .attr('fill', (d, i) => i === 3 && hlLast ? ACC : FG3)
     .attr('filter', (d, i) => i === 3 && hlLast ? 'url(#glow-gr)' : null);
 
-  svg.selectAll('.gr-val')
-    .data(growthData)
+  svg.selectAll('.gr-val').data(growthData)
     .transition().duration(DUR).ease(EASE)
-    .delay((_, i) => i < showCount ? Math.max(0, (i - (showCount === 4 ? 3 : 0)) * 100) + 200 : 0)
-    .attr('y', (d, i) => i < showCount ? y(d.pp) - 10 : iH - 10)
-    .attr('fill', (d, i) => {
-      if (i >= showCount) return 'transparent';
-      return i === 3 && hlLast ? ACC : FG2;
-    })
+    .delay((_, i) => i < showCount ? Math.max(0, (i - (showCount === 4 ? 3 : 0)) * 100) + 180 : 0)
+    .attr('y', (d, i) => i < showCount ? y(d.pp) - 9 : iH - 9)
+    .attr('fill', (d, i) => i >= showCount ? 'transparent' : (i === 3 && hlLast ? ACC : FG2))
     .attr('font-size', (d, i) => i === 3 && hlLast ? 15 : 13)
     .attr('font-weight', (d, i) => i === 3 && hlLast ? '700' : '400');
 
-  // Year labels highlight
-  svg.selectAll('.gr-xl')
-    .data(growthData)
+  svg.selectAll('.gr-xl').data(growthData)
     .transition().duration(DUR)
     .attr('fill', (d, i) => i === 3 && hlLast ? ACC : FG2)
     .attr('font-weight', (d, i) => i === 3 && hlLast ? '500' : '400');
@@ -875,15 +910,25 @@ const bioData = [
 function initBio() {
   const el = document.getElementById('vis-bio');
   const W = el.clientWidth, H = el.clientHeight;
-  const m = { t: 16, r: 60, b: 200, l: 170 };
-  const iW = W - m.l - m.r, iH = H - m.t - m.b;
+  const mob = W < 600;
+  const lbl = mob ? Math.min(120, W * 0.36) : 170;
+  const fs  = mob ? 12 : 15;
+  // Bars sit in top portion; cards below
+  const barH = mob ? 140 : 160;
+  const cardGap = mob ? 16 : 40;
+  const cardH = 130;
+  const m = { t: 12, r: mob ? 36 : 60, b: 0, l: lbl };
+  const iW = W - m.l - m.r;
 
-  const svg = d3.select('#vis-bio').append('svg').attr('width', W).attr('height', H);
+  const totalH = m.t + barH + cardGap + cardH + 16;
+  const svg = d3.select('#vis-bio').append('svg')
+    .attr('width', W).attr('height', totalH)
+    .style('overflow', 'visible');
   const defs = svg.append('defs'); addGlow(defs, 'glow-bio', 5);
   const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
 
   const x = d3.scaleLinear().domain([0, 25]).range([0, iW]);
-  const y = d3.scaleBand().domain(bioData.map(d => d.key)).range([0, iH]).padding(0.45);
+  const y = d3.scaleBand().domain(bioData.map(d => d.key)).range([0, barH]).padding(0.4);
 
   const rows = g.selectAll('.bio-row').data(bioData).join('g')
     .attr('class', 'bio-row').attr('transform', d => `translate(0,${y(d.key)})`);
@@ -895,50 +940,56 @@ function initBio() {
     .attr('height', y.bandwidth()).attr('rx', 2).attr('width', 0).attr('fill', FG3);
 
   rows.append('text').attr('class', 'bio-label')
-    .attr('x', -10).attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
-    .attr('text-anchor', 'end').attr('font-family', SERIF).attr('font-size', 15)
-    .attr('fill', FG2).text(d => d.label);
+    .attr('x', -8).attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
+    .attr('text-anchor', 'end').attr('font-family', SERIF).attr('font-size', fs)
+    .attr('fill', FG2).text(d => mob && d.label.length > 12 ? d.label.slice(0, 11) + '…' : d.label);
 
   rows.append('text').attr('class', 'bio-val')
     .attr('y', y.bandwidth() / 2).attr('dy', '0.35em')
-    .attr('x', d => x(d.pct) + 10).attr('text-anchor', 'start')
-    .attr('font-family', MONO).attr('font-size', 14).attr('fill', FG2)
+    .attr('x', d => x(d.pct) + 8).attr('text-anchor', 'start')
+    .attr('font-family', MONO).attr('font-size', mob ? 11 : 14).attr('fill', FG2)
     .attr('opacity', 0).text(d => d.pct + '%');
 
-  // Stat cards
-  const cardY = iH + 40;
-  const cardW = (iW - 16) / 2;
+  // Stat cards — full-width split on mobile
+  const cardY = barH + cardGap;
+  const cardW = (iW - 12) / 2;
   const cardData = [
-    { label: 'Own a reader',     num: '64%', sub: 'say their phone has a fingerprint reader' },
-    { label: 'Have activated it',num: '76%', sub: 'of reader owners have switched it on' },
+    { label: 'Own a reader',     num: '64%', sub1: 'say their phone has a', sub2: 'fingerprint reader' },
+    { label: 'Have activated it',num: '76%', sub1: 'of reader owners have', sub2: 'switched it on' },
   ];
 
   const cards = g.selectAll('.bio-card').data(cardData).join('g')
     .attr('class', 'bio-card')
-    .attr('transform', (_, i) => `translate(${i * (cardW + 16)},${cardY})`)
+    .attr('transform', (_, i) => `translate(${i * (cardW + 12)},${cardY})`)
     .attr('opacity', 0);
 
-  cards.append('rect').attr('width', cardW).attr('height', 110)
+  cards.append('rect').attr('width', cardW).attr('height', cardH)
     .attr('rx', 8).attr('fill', '#e8e2d4').attr('stroke', FG4).attr('stroke-width', 1);
 
-  cards.append('text').attr('x', 18).attr('y', 26)
-    .attr('font-family', MONO).attr('font-size', 10).attr('letter-spacing', '2px')
+  const lbFsCard = mob ? 9 : 10;
+  const numFsCard = mob ? 30 : 36;
+  const subFsCard = mob ? 10 : 11.5;
+
+  cards.append('text').attr('x', 14).attr('y', 24)
+    .attr('font-family', MONO).attr('font-size', lbFsCard).attr('letter-spacing', '1.5px')
     .attr('fill', FG2).text(d => d.label.toUpperCase());
 
-  cards.append('text').attr('x', 18).attr('y', 68)
-    .attr('font-family', DISP).attr('font-size', 38).attr('font-weight', '700')
+  cards.append('text').attr('x', 14).attr('y', mob ? 62 : 68)
+    .attr('font-family', DISP).attr('font-size', numFsCard).attr('font-weight', '700')
     .attr('fill', ACC).text(d => d.num);
 
-  cards.append('text').attr('x', 18).attr('y', 90)
-    .attr('font-family', SERIF).attr('font-size', 12)
-    .attr('fill', FG2).text(d => d.sub);
+  const subText = cards.append('text').attr('x', 14).attr('y', mob ? 82 : 88)
+    .attr('font-family', SERIF).attr('font-size', subFsCard).attr('fill', FG2);
+  subText.append('tspan').attr('x', 14).attr('dy', '0em').text(d => d.sub1);
+  subText.append('tspan').attr('x', 14).attr('dy', '1.3em').text(d => d.sub2);
 
   C.bio = { svg, x };
-  updateBio(0);
+  updateBio(C.bio._state || 0);
 }
 
 function updateBio(state) {
   if (!C.bio) return;
+  C.bio._state = state;
   const { svg, x } = C.bio;
 
   if (state === 0) {
@@ -961,13 +1012,10 @@ function updateBio(state) {
       .attr('width', d => x(d.pct))
       .attr('fill', d => d.key === 'fp' ? ACC : FG3)
       .attr('filter', d => d.key === 'fp' ? 'url(#glow-bio)' : null);
-    svg.selectAll('.bio-val')
-      .transition().duration(DUR).attr('opacity', 1)
+    svg.selectAll('.bio-val').transition().duration(DUR).attr('opacity', 1)
       .attr('fill', d => d.key === 'fp' ? ACC2 : FG2);
-    svg.selectAll('.bio-label')
-      .transition().duration(DUR)
-      .attr('fill', d => d.key === 'fp' ? FG : FG2)
-      .attr('opacity', 1);
+    svg.selectAll('.bio-label').transition().duration(DUR)
+      .attr('fill', d => d.key === 'fp' ? FG : FG2).attr('opacity', 1);
     svg.selectAll('.bio-card').transition().duration(DUR).attr('opacity', 0);
   } else {
     svg.selectAll('.bio-bar')
@@ -975,11 +1023,9 @@ function updateBio(state) {
       .attr('width', d => x(d.pct))
       .attr('fill', d => d.key === 'fp' ? ACC : FG3)
       .attr('filter', d => d.key === 'fp' ? 'url(#glow-bio)' : null);
-    svg.selectAll('.bio-val')
-      .transition().duration(DUR).attr('opacity', 1)
+    svg.selectAll('.bio-val').transition().duration(DUR).attr('opacity', 1)
       .attr('fill', d => d.key === 'fp' ? ACC2 : FG2);
-    svg.selectAll('.bio-label')
-      .transition().duration(DUR)
+    svg.selectAll('.bio-label').transition().duration(DUR)
       .attr('fill', d => d.key === 'fp' ? FG : FG2).attr('opacity', 1);
     svg.selectAll('.bio-card')
       .transition().duration(DUR).delay((_, i) => i * 160).attr('opacity', 1);
@@ -1001,7 +1047,7 @@ const stepObserver = new IntersectionObserver((entries) => {
     const state = parseInt(step.dataset.state, 10);
     dispatch(vis, state);
   });
-}, { threshold: 0, rootMargin: '-20% 0px -60% 0px' });
+}, { threshold: 0, rootMargin: '-15% 0px -55% 0px' });
 
 document.querySelectorAll('.step').forEach(el => stepObserver.observe(el));
 
@@ -1011,22 +1057,49 @@ function dispatch(vis, state) {
 }
 
 // ═══════════════════════════════════════════════════════
-// INITIALISE
+// INITIALISE + RESIZE
 // ═══════════════════════════════════════════════════════
-function ready() {
-  const els = ['vis-morning','vis-day','vis-devices','vis-growth','vis-bio'];
-  const ok = els.every(id => {
+const visIds = ['vis-morning','vis-day','vis-devices','vis-growth','vis-bio'];
+const initFns = { 'vis-morning': initMorning, 'vis-day': initDay, 'vis-devices': initDevices, 'vis-growth': initGrowth, 'vis-bio': initBio };
+
+function buildAll() {
+  // Clear existing SVGs
+  visIds.forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
+  // Reset chart registry but keep state
+  const savedStates = {};
+  Object.keys(C).forEach(k => { savedStates[k] = C[k]._state || 0; delete C[k]; });
+  // Re-init each
+  visIds.forEach(id => {
     const el = document.getElementById(id);
-    return el && el.clientWidth > 0 && el.clientHeight > 0;
+    if (el && el.clientWidth > 0) {
+      initFns[id]();
+      // Restore state after a beat so transitions play
+      const key = id.replace('vis-', '');
+      if (savedStates[key] !== undefined && C[key]) {
+        const fn = { morning: updateMorning, day: updateDay, devices: updateDevices, growth: updateGrowth, bio: updateBio }[key];
+        if (fn) setTimeout(() => fn(savedStates[key]), 60);
+      }
+    }
+  });
+}
+
+function ready() {
+  const ok = visIds.every(id => {
+    const el = document.getElementById(id);
+    return el && el.clientWidth > 0;
   });
   if (!ok) { requestAnimationFrame(ready); return; }
-  initMorning();
-  initDay();
-  initDevices();
-  initGrowth();
-  initBio();
+  buildAll();
 }
 requestAnimationFrame(ready);
+
+// Debounced resize
+let _resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(buildAll, 250);
+});
+
 </script>
 </body>
 </html>
