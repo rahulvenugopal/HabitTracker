@@ -1511,9 +1511,9 @@ function updateDay(state) {
 }
 
 const commBarData = [
-  { label: 'Email', pct: 71, key: 'email' },
-  { label: 'Social network', pct: 59, key: 'social' },
-  { label: 'Instant messaging', pct: 56, key: 'im' }
+  { label: 'Email', lines: ['Email'], pct: 71, key: 'email' },
+  { label: 'Social network', lines: ['Social network'], pct: 59, key: 'social' },
+  { label: 'Instant messaging', lines: ['Instant', 'messaging'], pct: 56, key: 'im' }
 ];
 
 const commCards = [
@@ -1528,12 +1528,12 @@ function initComm() {
   const H = Math.max(420, Math.floor(box.height));
   svg.attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
   const mob = isNarrow(W);
-  const margin = { top: 42, right: mob ? 34 : 56, bottom: 22, left: mob ? 102 : 162 };
+  const margin = { top: 42, right: mob ? 34 : 56, bottom: 22, left: mob ? 118 : 204 };
   const barH = mob ? 170 : 188;
   const cardGap = mob ? 16 : 18;
   const cardY = margin.top + barH + 26;
-  const cardW = mob ? W - 36 : (W - 48) / 2;
-  const cardH = 124;
+  const cardW = mob ? W - 36 : (W - 54) / 2;
+  const cardH = mob ? 128 : 138;
   const innerW = W - margin.left - margin.right;
   const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
   const defs = svg.append('defs');
@@ -1568,16 +1568,26 @@ function initComm() {
     .attr('width', 0)
     .attr('fill', FG3);
 
-  rows.append('text')
+  const labels = rows.append('text')
     .attr('class', 'comm-label')
     .attr('x', -10)
     .attr('y', y.bandwidth() / 2)
-    .attr('dy', '0.35em')
     .attr('text-anchor', 'end')
     .attr('font-family', SERIF)
     .attr('font-size', mob ? 11 : 13)
-    .attr('fill', FG2)
-    .text(d => d.label);
+    .attr('fill', FG2);
+
+  labels.each(function(d) {
+    const text = d3.select(this);
+    text.selectAll('tspan').remove();
+    const lines = d.lines || [d.label];
+    lines.forEach((line, i) => {
+      text.append('tspan')
+        .attr('x', -10)
+        .attr('dy', lines.length === 1 ? (i === 0 ? '0.35em' : '1.1em') : (i === 0 ? '-0.15em' : '1.05em'))
+        .text(line);
+    });
+  });
 
   rows.append('text')
     .attr('class', 'comm-value')
@@ -1641,8 +1651,9 @@ function initComm() {
     .attr('font-size', mob ? 10.5 : 11.5)
     .attr('fill', FG2);
 
-  lines.append('tspan').attr('x', 16).attr('dy', '0em').text(d => d.line1);
-  lines.append('tspan').attr('x', 16).attr('dy', '1.35em').text(d => d.line2);
+  lines.each(function(d) {
+    wrapSvgText(d3.select(this), [d.line1, d.line2], cardW - 32, 1.35);
+  });
 
   C.comm = { svg };
   updateComm(C.comm._state || 0);
@@ -1858,8 +1869,8 @@ function initBio() {
   const margin = { top: 42, right: mob ? 34 : 56, bottom: 18, left: mob ? 108 : 164 };
   const barH = 148;
   const cardY = margin.top + barH + 28;
-  const cardW = mob ? W - 36 : (W - 48) / 2;
-  const cardH = 122;
+  const cardW = mob ? W - 36 : (W - 54) / 2;
+  const cardH = mob ? 122 : 132;
   const innerW = W - margin.left - margin.right;
   const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
   const defs = svg.append('defs');
@@ -1965,8 +1976,9 @@ function initBio() {
     .attr('font-size', mob ? 10.5 : 11.5)
     .attr('fill', FG2);
 
-  copy.append('tspan').attr('x', 16).attr('dy', '0em').text(d => d.line1);
-  copy.append('tspan').attr('x', 16).attr('dy', '1.35em').text(d => d.line2);
+  copy.each(function(d) {
+    wrapSvgText(d3.select(this), [d.line1, d.line2], cardW - 32, 1.35);
+  });
 
   C.bio = { svg, x };
   updateBio(C.bio._state || 0);
